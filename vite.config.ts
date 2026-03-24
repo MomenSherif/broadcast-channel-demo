@@ -6,7 +6,7 @@ export default defineConfig({
     rolldownOptions: {
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
-        successful: resolve(import.meta.dirname, 'successful.html'),
+        completed: resolve(import.meta.dirname, 'completed.html'),
       },
     },
   },
