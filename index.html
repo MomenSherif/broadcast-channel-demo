@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg:         #090c10;
+        --surface:    rgba(255,255,255,0.04);
+        --border:     rgba(255,255,255,0.08);
+        --border-hi:  rgba(255,255,255,0.14);
+        --text:       #c9d1dc;
+        --text-dim:   #5a6478;
+        --heading:    #edf0f5;
+        --em:         #00e87a;
+        --em-glow:    rgba(0,232,122,0.18);
+        --em-dim:     rgba(0,232,122,0.08);
+        --warn:       #f5a623;
+        --warn-dim:   rgba(245,166,35,0.1);
+        --err:        #ff4f4f;
+        --err-dim:    rgba(255,79,79,0.1);
+        --mono:       'DM Mono', monospace;
+        --sans:       'Syne', sans-serif;
+      }
+
+      body {
+        font-family: var(--sans);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+      }
+
+      /* ambient background */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 60% 50% at 20% 60%, rgba(0,232,122,0.06) 0%, transparent 70%),
+          radial-gradient(ellipse 50% 40% at 80% 20%, rgba(0,150,255,0.05) 0%, transparent 70%);
+        pointer-events: none;
+      }
+
+      /* subtle grid */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+      }
+
+      .card {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 40px 36px;
+        width: 100%;
+        max-width: 420px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,0.04) inset,
+          0 24px 48px rgba(0,0,0,0.6),
+          0 0 80px rgba(0,232,122,0.04);
+        animation: cardIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+      }
+
+      @keyframes cardIn {
+        from { opacity: 0; transform: translateY(16px) scale(0.98); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      /* top accent line */
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 20%; right: 20%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--em), transparent);
+        border-radius: 1px;
+      }
+
+      h1 {
+        font-family: var(--sans);
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: var(--heading);
+        margin-bottom: 6px;
+      }
+
+      /* small em dash accent before heading */
+      h1::before {
+        content: '— ';
+        color: var(--em);
+        font-weight: 400;
+      }
+
+      p {
+        color: var(--text-dim);
+        margin-bottom: 28px;
+        font-size: 0.82rem;
+        letter-spacing: 0.02em;
+        font-family: var(--mono);
+      }
+
+      input {
+        width: 100%;
+        padding: 11px 14px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-family: var(--mono);
+        color: var(--heading);
+        margin-bottom: 12px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        caret-color: var(--em);
+      }
+
+      input::placeholder { color: var(--text-dim); }
+
+      input:focus {
+        border-color: rgba(0,232,122,0.4);
+        background: rgba(0,232,122,0.03);
+        box-shadow: 0 0 0 3px rgba(0,232,122,0.08);
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background: var(--em);
+        color: #050a06;
+        border: none;
+        border-radius: 8px;
+        font-family: var(--sans);
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: opacity 0.15s, box-shadow 0.2s, transform 0.1s;
+        box-shadow: 0 4px 20px rgba(0,232,122,0.3);
+      }
+
+      button:hover {
+        opacity: 0.9;
+        box-shadow: 0 6px 28px rgba(0,232,122,0.45);
+        transform: translateY(-1px);
+      }
+
+      button:active { transform: translateY(0); }
+
+      button:disabled {
+        background: rgba(0,232,122,0.2);
+        color: rgba(0,232,122,0.4);
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+
+      #status {
+        margin-top: 16px;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-family: var(--mono);
+        display: none;
+        text-align: left;
+        border: 1px solid transparent;
+        position: relative;
+      }
+
+      #status::before {
+        content: '▸ ';
+        opacity: 0.6;
+      }
+
+      #status.waiting {
+        display: block;
+        background: var(--warn-dim);
+        border-color: rgba(245,166,35,0.2);
+        color: var(--warn);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      #status.success {
+        display: block;
+        background: var(--em-dim);
+        border-color: rgba(0,232,122,0.2);
+        color: var(--em);
+      }
+
+      #status.error {
+        display: block;
+        background: var(--err-dim);
+        border-color: rgba(255,79,79,0.2);
+        color: var(--err);
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.65; }
+      }
+
+      .hint {
+        margin-top: 20px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        text-align: left;
+        overflow: hidden;
+        background: rgba(0,0,0,0.3);
+      }
+
+      .hint summary {
+        font-size: 0.72rem;
+        font-family: var(--mono);
+        color: var(--text-dim);
+        cursor: pointer;
+        user-select: none;
+        padding: 10px 14px;
+        border-bottom: 1px solid transparent;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: color 0.15s, border-color 0.15s;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .hint summary::-webkit-details-marker { display: none; }
+
+      .hint summary::before {
+        content: '▶';
+        font-size: 0.6rem;
+        color: var(--em);
+        transition: transform 0.2s;
+      }
+
+      .hint[open] summary::before { transform: rotate(90deg); }
+
+      .hint[open] summary {
+        color: var(--text);
+        border-bottom-color: var(--border);
+      }
+
+      .hint pre {
+        margin: 0;
+        padding: 14px;
+        font-size: 0.72rem;
+        font-family: var(--mono);
+        color: var(--text);
+        white-space: pre-wrap;
+        word-break: break-all;
+        line-height: 1.7;
+      }
+
+      /* JSON key coloring */
+      .hint pre { color: #8bdfb0; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Payment Demo</h1>
+      <p>Enter your intent ID to start the payment flow</p>
+      <input id="intentInput" type="text" placeholder="Intent ID" />
+      <button id="payBtn">Pay Now</button>
+      <div id="status"></div>
+      <details class="hint" open>
+        <summary>Intent creation — required redirect fields</summary>
+        <pre>{
+  "successful_redirect_url": "http://myapp.localhost:1355/completed",
+  "failed_redirect_url": "http://myapp.localhost:1355/completed",
+  "pending_external_action_redirect_url": "http://myapp.localhost:1355/completed"
+}</pre>
+      </details>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
