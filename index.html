@@ -246,6 +246,38 @@
         gap: 6px;
       }
 
+      .hint-copy {
+        margin-left: auto;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        color: var(--text-dim);
+        font-family: var(--mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.05em;
+        padding: 3px 8px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: color 0.15s, border-color 0.15s, background 0.15s;
+        width: auto;
+        box-shadow: none;
+        transform: none;
+      }
+
+      .hint-copy:hover {
+        color: var(--em);
+        border-color: rgba(0,232,122,0.4);
+        background: var(--em-dim);
+        opacity: 1;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .hint-copy.copied {
+        color: var(--em);
+        border-color: rgba(0,232,122,0.4);
+      }
+
       .hint summary::-webkit-details-marker { display: none; }
 
       .hint summary::before {
@@ -285,14 +317,27 @@
       <button id="payBtn">Pay Now</button>
       <div id="status"></div>
       <details class="hint" open>
-        <summary>Intent creation — required redirect fields</summary>
-        <pre>{
-  "successful_redirect_url": "http://myapp.localhost:1355/completed",
-  "failed_redirect_url": "http://myapp.localhost:1355/completed",
-  "pending_external_action_redirect_url": "http://myapp.localhost:1355/completed"
+        <summary>Intent creation — required redirect fields<button class="hint-copy" id="copyBtn" onclick="copyHint(event)">Copy</button></summary>
+        <pre id="hintJson">{
+  "successful_redirect_url": "https://broadcast-channel-demo.vercel.app/completed",
+  "failed_redirect_url": "https://broadcast-channel-demo.vercel.app/completed",
+  "pending_external_action_redirect_url": "https://broadcast-channel-demo.vercel.app/completed"
 }</pre>
       </details>
     </div>
+    <script>
+      function copyHint(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const btn = document.getElementById('copyBtn');
+        const text = document.getElementById('hintJson').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+        });
+      }
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
