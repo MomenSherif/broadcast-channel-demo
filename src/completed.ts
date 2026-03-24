@@ -15,31 +15,40 @@ const isFailed = status === 'FAILED';
 const channel = new BroadcastChannel(CHANNEL_NAME);
 channel.postMessage({
   type: isFailed ? 'PAYMENT_FAILED' : 'PAYMENT_SUCCESS',
-  payload: { type, status, intentId, transactionId, amount, currency, responseCode, responseMessage },
+  payload: {
+    type,
+    status,
+    intentId,
+    transactionId,
+    amount,
+    currency,
+    responseCode,
+    responseMessage,
+  },
 });
 channel.close();
 
 // Update UI based on outcome
 const card = document.querySelector('.card') as HTMLElement;
-const body = document.body;
 
 if (isFailed) {
-  body.style.background = '#fef2f2';
   card.innerHTML = `
     <div class="icon">❌</div>
-    <h1 style="color:#991b1b">Payment Failed</h1>
-    <p style="margin-bottom:8px">${responseMessage || 'An error occurred.'}</p>
-    <p style="font-size:0.8rem;color:#aaa">Code: ${responseCode}</p>
-    <p style="margin-top:12px">This window will close shortly...</p>
+    <h1 class="failed">Payment Failed</h1>
+    <p>${responseMessage || 'An error occurred.'}</p>
+    <p class="meta">Code: ${responseCode}</p>
+    <p class="closing">This window will close shortly...</p>
+    <div class="progress"></div>
   `;
 } else {
   card.innerHTML = `
     <div class="icon">✅</div>
     <h1>Payment Successful!</h1>
-    <p style="margin-bottom:8px">${amount} ${currency}</p>
-    <p style="font-size:0.8rem;color:#aaa">Transaction: ${transactionId}</p>
-    <p style="margin-top:12px">This window will close shortly...</p>
+    <p>${amount} ${currency}</p>
+    <p class="meta">Transaction: ${transactionId}</p>
+    <p class="closing">This window will close shortly...</p>
+    <div class="progress"></div>
   `;
 }
 
-setTimeout(() => window.close(), 2000);
+setTimeout(() => window.close(), 3000);

@@ -21,7 +21,7 @@ payBtn.addEventListener('click', () => {
 
   const channel = new BroadcastChannel(CHANNEL_NAME);
 
-  channel.addEventListener('message', (event) => {
+  channel.addEventListener('message', event => {
     const { type, payload } = event.data ?? {};
     if (type === 'PAYMENT_SUCCESS') {
       channel.close();
